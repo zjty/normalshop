@@ -22,7 +22,7 @@ class BaseSetting(object):
 
 
 class GlobalSettings(object):
-    site_title = "慕学生鲜后台"
+    site_title = "生鲜后台"
     site_footer = "mxshop"
     # menu_style = "accordion"
 

@@ -28,7 +28,7 @@ def deal_category(data, depth, category_pro):
         category_instance.code = data["code"]
         category_instance.name = data["name"]
         category_instance.category_type = depth
-        if category_pro:
+        if category_pro is not None:
             category_instance.parent_category = category_pro
         category_instance.save()
 

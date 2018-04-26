@@ -14,14 +14,27 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 # from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 import xadmin
 from normalshop.settings import MEDIA_ROOT
 from django.views.static import serve
 
+from rest_framework.documentation import include_docs_urls
+from rest_framework.routers import DefaultRouter
+
+from goods.views import GoodsListViewSet, GoodsCategoryViewSet
+
+router = DefaultRouter()
+# 配置goods的url
+router.register('goods', GoodsListViewSet, base_name='goods')
+router.register('categorys', GoodsCategoryViewSet, base_name='categorys')
 
 urlpatterns = [
     path('xadmin/', xadmin.site.urls),
+    # path('goods/', include('goods.urls')),
+    path('', include(router.urls)),
     # 配置上传文件的访问处理函数
-    re_path(r'media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT})
+    re_path(r'media/(?P<path>.*)$', serve, {"document_root": MEDIA_ROOT}),
+    path('docs/', include_docs_urls(title="通用生鲜")),
+    path('api-auth/', include('rest_framework.urls')),
 ]
