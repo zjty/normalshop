@@ -5,10 +5,10 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 import re
 
+from normalshop.settings import REGEX_MOBILE
 from .models import UserFav, UserLeavingMessage, UserAddress
 from goods.serializer import GoodsSerializer
 
-from normalshop.settings import REGEX_MOBILE
 
 class UserFavDetailSerializer(serializers.ModelSerializer):
     goods = GoodsSerializer()
