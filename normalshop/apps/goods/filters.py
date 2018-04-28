@@ -9,7 +9,7 @@ from .models import Goods
 
 
 class GoodsFilter(filters.FilterSet):
-    pricemin = filters.NumberFilter(name="shop_price", lookup_expr='gte')
+    pricemin = filters.NumberFilter(name="shop_price", help_text="最低价格", lookup_expr='gte')
     pricemax = filters.NumberFilter(name="shop_price", lookup_expr='lte')
     top_category = filters.NumberFilter(method='top_category_filter')
 
@@ -20,5 +20,5 @@ class GoodsFilter(filters.FilterSet):
 
     class Meta:
         model = Goods
-        fields = ['pricemin', 'pricemax']
+        fields = ['pricemin', 'pricemax', 'is_hot']
 

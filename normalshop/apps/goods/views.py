@@ -7,8 +7,8 @@ from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.authentication import TokenAuthentication
 
-from .models import Goods, GoodsCategory
-from .serializer import GoodsSerializer, CategorySerializer
+from .models import Goods, GoodsCategory, GoodsCategoryBrand
+from .serializer import GoodsSerializer, CategorySerializer, GoodsCategoryBrandSerializer
 from .filters import GoodsFilter
 # Create your views here.
 
@@ -20,7 +20,7 @@ class GoodsPagination(PageNumberPagination):
     max_page_size = 100
 
 
-class GoodsListViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class GoodsListViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     """
     商品列表 分页，搜索，过滤，排序
     """
@@ -43,3 +43,8 @@ class GoodsCategoryViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin, vie
     """
     queryset = GoodsCategory.objects.filter(category_type=1)
     serializer_class = CategorySerializer
+
+
+class GoodsCategoryBrandViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = GoodsCategoryBrand.objects.all()
+    serializer_class = GoodsCategoryBrandSerializer
