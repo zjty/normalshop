@@ -20,6 +20,13 @@ class UserFavViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.Retr
     create:
         收藏商品
     """
+
+    # def perform_create(self, serializer):
+    #     instance = serializer.save()
+    #     goods = instance.goods
+    #     goods.fav_num += 1
+    #     goods.save()
+
     def get_serializer_class(self):
         if self.action == "list":
             return UserFavDetailSerializer

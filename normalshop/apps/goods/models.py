@@ -74,7 +74,7 @@ class Goods(models.Model):
 
 
 class IndexAd(models.Model):
-    category = models.ForeignKey(GoodsCategory, related_name='category',verbose_name="商品类目", on_delete=models.CASCADE)
+    category = models.ForeignKey(GoodsCategory, related_name='category', verbose_name="商品类目", on_delete=models.CASCADE)
     goods = models.ForeignKey(Goods, related_name='goods', on_delete=models.CASCADE)
 
     class Meta:

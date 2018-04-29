@@ -163,7 +163,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    )
+    ),
+    'DEFAULT_THROTTLE_CLASSES': (
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ),
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '100/day',
+        'user': '1000/day'
+    }
 }
 
 import datetime
@@ -174,3 +182,28 @@ JWT_AUTH = {
 
 # 手机号码正则表达式
 REGEX_MOBILE = "^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
+
+
+#支付宝相关配置
+private_key_path = os.path.join(BASE_DIR, 'apps/trade/keys/private_2048.txt')
+ali_pub_key_path = os.path.join(BASE_DIR, 'apps/trade/keys/alipaykey_2048.txt')
+APP_NOTIFY_URL = "http://127.0.0.1:8000/alipay/return/"
+RETURN_URL = "http://127.0.0.1:8000/alipay/return/"
+ALIPAY_DEBUG = True
+APP_ID = "2016091400512961"
+
+# 配置drf extensions超时时间
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 15
+}
+
+# 配置redis缓存
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}

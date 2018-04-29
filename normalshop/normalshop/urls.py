@@ -23,11 +23,13 @@ from rest_framework.documentation import include_docs_urls
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken import views
 from rest_framework_jwt.views import obtain_jwt_token
+from django.views.generic import TemplateView
 
-from goods.views import GoodsListViewSet, GoodsCategoryViewSet
+from goods.views import GoodsListViewSet, GoodsCategoryViewSet, BannerViewSet, IndexCategoryViewSet
 from users.views import SmsCodeViewSet, UserViewSet
 from user_operation.views import UserFavViewSet, LeavingMessageViewSet, AddressViewSet
 from trade.views import ShoppingCartViewSet, OrderViewSet
+from trade.views import AlipayView
 
 router = DefaultRouter()
 # 配置goods的url
@@ -48,6 +50,10 @@ router.register('address', AddressViewSet, base_name='address')
 router.register('shopcarts', ShoppingCartViewSet, base_name='shopcarts')
 # 订单
 router.register('orders', OrderViewSet, base_name='orders')
+# 首页轮播图
+router.register('banners', BannerViewSet, base_name='banners')
+# 首页推荐商品
+router.register('indexgoods', IndexCategoryViewSet, base_name='indexgoods')
 
 urlpatterns = [
     path('xadmin/', xadmin.site.urls),
@@ -61,4 +67,6 @@ urlpatterns = [
     path('api-token-auth/', views.obtain_auth_token),
     # jwt认证接口
     path('login/', obtain_jwt_token),
+    path('alipay/return/', AlipayView.as_view(), name="alipay"),
+    # path('index/', TemplateView.as_view(template_name="index.html"), name="index")
 ]

@@ -9,6 +9,8 @@ from normalshop.settings import REGEX_MOBILE
 from goods.serializer import GoodsSerializer
 from .models import ShoppingCart, OrderInfo, OrderGoods
 from goods.models import Goods
+from utils.alipay import AliPay
+from normalshop.settings import private_key_path, ali_pub_key_path, ALIPAY_DEBUG, RETURN_URL, APP_NOTIFY_URL, APP_ID
 
 
 class ShopCarDetailSerializer(serializers.ModelSerializer):
@@ -25,7 +27,7 @@ class ShoppingCartSerializer(serializers.Serializer):
     )
     nums = serializers.IntegerField(required=True, label="数量", min_value=1,
                                     error_messages={
-                                        "min_value":"商品数量不能小于一",
+                                        "min_value": "商品数量不能小于一",
                                         "required": "请选择购买数量"
                                     })
     goods = serializers.PrimaryKeyRelatedField(required=True, label="商品", queryset=Goods.objects.all())
@@ -34,6 +36,9 @@ class ShoppingCartSerializer(serializers.Serializer):
         user = self.context["request"].user
         nums = validated_data["nums"]
         goods = validated_data["goods"]
+        leave_goods = Goods.objects.get(id=goods.id)
+        if leave_goods.goods_num - nums <= 0:
+            raise serializers.ValidationError("商品库存不足")
 
         existed = ShoppingCart.objects.filter(goods=goods, user=user)
         if existed:
@@ -45,6 +50,10 @@ class ShoppingCartSerializer(serializers.Serializer):
         return existed
 
     def update(self, instance, validated_data):
+        leave_goods = Goods.objects.get(id=instance.goods.id)
+        diff_nums = validated_data["nums"] - instance.nums
+        if leave_goods.goods_num - diff_nums <= 0:
+            raise serializers.ValidationError("商品库存不足")
         instance.nums = validated_data["nums"]
         instance.save()
         return instance
@@ -58,9 +67,28 @@ class OrderSerializer(serializers.ModelSerializer):
     pay_status = serializers.CharField(read_only=True)
     trade_no = serializers.CharField(read_only=True)
     order_sn = serializers.CharField(read_only=True)
-    # alipay_url = serializers.SerializerMethodField(read_only=True)
     pay_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
     add_time = serializers.DateTimeField(read_only=True, format='%Y-%m-%d %H:%M:%S')
+    alipay_url = serializers.SerializerMethodField(read_only=True)
+
+    def get_alipay_url(self, obj):
+        alipay = AliPay(
+            appid=APP_ID,
+            app_notify_url=APP_NOTIFY_URL,
+            app_private_key_path=private_key_path,
+            alipay_public_key_path=ali_pub_key_path,  # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+            debug=ALIPAY_DEBUG,  # 默认False,
+            return_url=RETURN_URL
+        )
+
+        url = alipay.direct_pay(
+            subject=obj.order_sn,
+            out_trade_no=obj.order_sn,
+            total_amount=obj.order_mount,
+        )
+        re_url = "https://openapi.alipaydev.com/gateway.do?{data}".format(data=url)
+
+        return re_url
 
     def generate_order_sn(self):
         # 当前时间+userid+随机数
@@ -93,6 +121,26 @@ class OrderGoodsSerialzier(serializers.ModelSerializer):
 
 class OrderDetailSerializer(serializers.ModelSerializer):
     goods = OrderGoodsSerialzier(many=True)
+    alipay_url = serializers.SerializerMethodField(read_only=True)
+
+    def get_alipay_url(self, obj):
+        alipay = AliPay(
+            appid=APP_ID,
+            app_notify_url=APP_NOTIFY_URL,
+            app_private_key_path=private_key_path,
+            alipay_public_key_path=ali_pub_key_path,  # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+            debug=ALIPAY_DEBUG,  # 默认False,
+            return_url=RETURN_URL
+        )
+
+        url = alipay.direct_pay(
+            subject=obj.order_sn,
+            out_trade_no=obj.order_sn,
+            total_amount=obj.order_mount,
+        )
+        re_url = "https://openapi.alipaydev.com/gateway.do?{data}".format(data=url)
+
+        return re_url
 
     class Meta:
         model = OrderInfo
