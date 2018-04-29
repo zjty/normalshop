@@ -68,5 +68,7 @@ urlpatterns = [
     # jwt认证接口
     path('login/', obtain_jwt_token),
     path('alipay/return/', AlipayView.as_view(), name="alipay"),
+    # 第三方登录
+    path('', include('social_django.urls', namespace='social'))
     # path('index/', TemplateView.as_view(template_name="index.html"), name="index")
 ]

@@ -35,6 +35,10 @@ AUTH_USER_MODEL = 'users.UserProfile'
 
 AUTHENTICATION_BACKENDS = (
     'users.views.CustomBackend',
+    'social_core.backends.weibo.WeiboOAuth2',
+    'social_core.backends.qq.QQOAuth2',
+    'social_core.backends.weixin.WeixinOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 INSTALLED_APPS = [
@@ -55,6 +59,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'rest_framework.authtoken',
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -82,6 +87,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -198,12 +205,23 @@ REST_FRAMEWORK_EXTENSIONS = {
 }
 
 # 配置redis缓存
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        }
-    }
-}
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#         }
+#     }
+# }
+
+SOCIAL_AUTH_WEIBO_KEY = '434902534'
+SOCIAL_AUTH_WEIBO_SECRET = '95a4c84709563168374d80afed407f43'
+
+SOCIAL_AUTH_QQ_KEY = '434902534'
+SOCIAL_AUTH_QQ_SECRET = '95a4c84709563168374d80afed407f43'
+
+SOCIAL_AUTH_WEIXIN_KEY = '434902534'
+SOCIAL_AUTH_WEIXIN_SECRET = '95a4c84709563168374d80afed407f43'
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/goods/'

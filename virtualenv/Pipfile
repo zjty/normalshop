@@ -25,6 +25,11 @@ django-guardian = "*"
 coreapi = "*"
 django-filter = "*"
 django-cors-headers = "*"
+djangorestframework-jwt = "*"
+pycryptodome = "*"
+drf-extensions = "*"
+django-redis = "*"
+social-auth-app-django = "*"
 
 
 [dev-packages]
