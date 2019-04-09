@@ -5,8 +5,6 @@ django生鲜购物商城
 python: 3.6<br /> 
 Django: 2.0.3
 
-## 使用
-    $ git clone https://github.com/zjty/normalshop.git
 使用pipenv采用以下命令:
 
     $ cd virtualenv
