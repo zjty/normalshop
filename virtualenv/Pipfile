@@ -7,7 +7,7 @@ name = "pypi"
 
 [packages]
 
-django = "==2.0.3"
+django = "==2.2.13"
 djangorestframework = "*"
 markdown = "*"
 mysqlclient = "*"
